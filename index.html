@@ -3,34 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SLEKSI KADES | CIPANCAR</title>
-	<link rel="icon" href="https://lh3.googleusercontent.com/d/1KXfiZH8rPTGXUO9WWGEib8WmgQsAZS6-" />
+    <title>SELEKSI KADES | CIPANCAR</title>
+    <link rel="icon" href="https://lh3.googleusercontent.com/d/1KXfiZH8rPTGXUO9WWGEib8WmgQsAZS6-" />
+    <!-- Menggunakan Font Modern: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        :root {
+            --primary: #2563eb;
+            --bg-color: #f1f5f9;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+        }
+
+        /* Loading Screen UI (Glassmorphism & Clean Design) */
+        #loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.6s ease-out, visibility 0.6s;
+        }
+
+        .logo-container {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
+            /* Animasi melayang ringan */
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-container img {
+            width: 60px;
+            height: auto;
+        }
+
+        .loading-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .loading-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        /* Animasi modern spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(37, 99, 235, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Iframe styling dengan transisi halus */
+        #appFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            opacity: 0;
+            transition: opacity 0.8s ease-in;
+            background-color: transparent;
+        }
+        
+        .fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .fade-in {
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Beautiful Loading Screen -->
+    <div id="loading-screen">
+        <div class="logo-container">
+            <!-- Menggunakan Logo dari kode Apps Script Anda -->
+            <img src="https://lh3.googleusercontent.com/d/1fnxW47f6qg-4umWjWRwWjeAXYsMOuATO" alt="Logo Desa">
+        </div>
+        <div class="loading-title">Aplikasi Seleksi Kades</div>
+        <div class="loading-subtitle">Menyiapkan sistem untuk Anda...</div>
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Iframe Container -->
     <iframe 
         id="appFrame"
         src="" 
-        width="100%" 
-        height="100%" 
-        style="border: none;" 
-        allow="geolocation; camera" 
+        allow="geolocation; camera; clipboard-read; clipboard-write" 
         allowfullscreen>
     </iframe>
 
     <script>
-        // Membaca halaman apa yang sedang ingin dibuka (login, absen, dsb)
+        // Membaca parameter halaman
         const urlParams = new URLSearchParams(window.location.search);
         const page = urlParams.get('page') || 'index';
         
-        // Ganti dengan link Web App /exec Apps Script asli Anda
+        // Link Web App Apps Script (Pastikan sudah Update Deploy 'New Version'!)
         const webAppUrl = "https://script.google.com/macros/s/AKfycbyXShxI6yEAS9KfqTdu2IYPyqq0UEZlV5dKalymMG4-SybJKZA9zW1ACnR7fPVhpZg/exec";
         
-        // Memuat iframe sesuai halaman
-        document.getElementById('appFrame').src = webAppUrl + "?page=" + page;
+        const iframe = document.getElementById('appFrame');
+        const loadingScreen = document.getElementById('loading-screen');
+
+        // Saat iframe selesai dimuat, hilangkan loading screen secara halus
+        iframe.onload = function() {
+            setTimeout(() => {
+                loadingScreen.classList.add('fade-out');
+                iframe.classList.add('fade-in');
+            }, 600); // Jeda halus agar Apps Script dirender sempurna sebelum loading dihilangkan
+        };
+
+        // Memuat iframe
+        iframe.src = webAppUrl + "?page=" + page;
     </script>
 
 </body>
